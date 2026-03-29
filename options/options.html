@@ -241,6 +241,45 @@
     .error-msg.show {
       display: block;
     }
+
+    .oauth-row {
+      display: flex;
+      gap: 10px;
+      margin: 8px 0 4px;
+    }
+
+    .btn-secondary {
+      padding: 10px 14px;
+      background: #fff;
+      color: #0f9d7d;
+      border: 1px solid #0f9d7d;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .btn-secondary:hover {
+      background: #f3fffb;
+    }
+
+    .status-chip {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f3f4f6;
+      color: #666;
+    }
+
+    .status-chip.connected {
+      background: #e6f9f5;
+      color: #0a6d56;
+      border: 1px solid #0f9d7d;
+    }
   </style>
 </head>
 <body>
@@ -256,6 +295,44 @@
       Connect your Notion workspace. Your token is stored locally and never
       leaves your browser.
     </p>
+
+    <h2 class="section-title">connect with oauth (recommended)</h2>
+
+    <div class="field">
+      <label for="notion-client-id">Notion OAuth Client ID</label>
+      <input
+        type="text"
+        id="notion-client-id"
+        placeholder="your_public_integration_client_id"
+        autocomplete="off"
+      />
+      <span class="hint">
+        From your Notion public integration settings.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="notion-client-secret">Notion OAuth Client Secret</label>
+      <input
+        type="password"
+        id="notion-client-secret"
+        placeholder="your_public_integration_client_secret"
+        autocomplete="off"
+      />
+      <span class="hint">
+        Required by Notion token exchange. For better security in production, move this exchange to your backend.
+      </span>
+    </div>
+
+    <div class="oauth-row">
+      <button class="btn-secondary" type="button" id="btn-connect-oauth" onclick="connectNotionOAuth()">connect notion</button>
+      <button class="btn-secondary" type="button" id="btn-disconnect-oauth" onclick="disconnectNotionOAuth()">disconnect</button>
+    </div>
+    <div class="status-chip" id="oauth-status">not connected</div>
+
+    <hr class="divider" />
+
+    <h2 class="section-title">manual token mode</h2>
 
     <!-- Notion Token -->
     <div class="field">

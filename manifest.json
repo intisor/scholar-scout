@@ -8,10 +8,12 @@
     "scripting",
     "storage",
     "alarms",
-    "contextMenus"
+    "contextMenus",
+    "identity"
   ],
   "host_permissions": [
-    "https://api.notion.com/*"
+    "https://api.notion.com/*",
+    "https://www.notion.com/*"
   ],
   "action": {
     "default_popup": "popup/popup.html",
