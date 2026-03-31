@@ -4,28 +4,40 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ScholarScout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="popup.css" />
+
 </head>
 <body>
   <div id="app">
     <!-- Header with mode toggle -->
     <header class="header">
       <div class="header-left">
-        <span class="logo-icon">🎓</span>
+        <img class="logo-icon" src="../icons/scholars.png" alt="ScholarScout" />
         <span class="app-name">ScholarScout</span>
+        <div id="ai-status-pulse" class="ai-status hidden">
+          <span class="ai-icon">✨</span>
+          <span class="ai-text">AI Scanning...</span>
+        </div>
       </div>
       <div class="mode-toggle">
-        <button class="mode-btn active" id="btn-quick" onclick="setMode('quick')">quick save</button>
-        <button class="mode-btn" id="btn-full" onclick="setMode('full')">full edit</button>
+        <button class="mode-btn active" id="btn-quick" type="button">quick save</button>
+        <button class="mode-btn" id="btn-full" type="button">full edit</button>
       </div>
     </header>
 
     <!-- Scraped info bar -->
     <div class="scraped-bar" id="scraped-bar">
-      <div class="scraped-label">scraped from current tab</div>
-      <div class="scraped-title" id="scraped-title">loading...</div>
+      <div class="scraped-row">
+        <div class="scraped-label">scraped from tab</div>
+        <div id="ai-confidence" class="ai-conf-badge hidden">AI: 98% Confident</div>
+      </div>
+      <div class="scraped-title" id="scraped-title">loading tab info...</div>
       <div class="scraped-url" id="scraped-url"></div>
     </div>
+
 
     <!-- Duplicate warning -->
     <div class="dup-warn hidden" id="dup-warn">
@@ -39,13 +51,15 @@
         <span class="health-text" id="health-text">checking status...</span>
       </div>
       <div class="health-actions">
+        <button type="button" class="health-btn" id="btn-open-panel">panel</button>
+        <button type="button" class="health-btn" id="btn-refresh-dom">refresh DOM</button>
         <button type="button" class="health-btn" id="btn-sync-now">sync</button>
         <button type="button" class="health-btn" id="btn-retry-pending">retry queue</button>
       </div>
     </div>
 
     <!-- Main form -->
-    <form class="form-body" id="main-form" onsubmit="return false">
+    <form class="form-body" id="main-form">
       <!-- Opportunity name -->
       <div class="field">
         <label for="opp-name">opportunity name</label>
@@ -174,8 +188,8 @@
 
     <!-- Action buttons -->
     <div class="actions">
-      <button class="btn-discard" onclick="handleDiscard()">discard</button>
-      <button class="btn-save" id="btn-save" onclick="handleSave()">save to notion</button>
+      <button class="btn-discard" id="btn-discard" type="button">discard</button>
+      <button class="btn-save" id="btn-save" type="button">save to notion</button>
     </div>
 
     <!-- Error message -->

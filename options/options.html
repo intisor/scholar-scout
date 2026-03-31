@@ -34,7 +34,11 @@
     }
 
     .logo-icon {
-      font-size: 24px;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      object-fit: cover;
+      display: block;
     }
 
     .logo-name {
@@ -286,7 +290,7 @@
   <div class="container">
     <!-- Logo -->
     <div class="logo">
-      <span class="logo-icon">🎓</span>
+      <img class="logo-icon" src="../icons/scholars.png" alt="ScholarScout" />
       <span class="logo-name">ScholarScout</span>
     </div>
 
@@ -325,10 +329,38 @@
     </div>
 
     <div class="oauth-row">
-      <button class="btn-secondary" type="button" id="btn-connect-oauth" onclick="connectNotionOAuth()">connect notion</button>
-      <button class="btn-secondary" type="button" id="btn-disconnect-oauth" onclick="disconnectNotionOAuth()">disconnect</button>
+      <button class="btn-secondary" type="button" id="btn-connect-oauth">connect notion</button>
+      <button class="btn-secondary" type="button" id="btn-disconnect-oauth">disconnect</button>
     </div>
     <div class="status-chip" id="oauth-status">not connected</div>
+
+    <hr class="divider" />
+
+    <h2 class="section-title">ai extraction (optional)</h2>
+
+    <div class="field">
+      <label for="gemini-api-key">Gemini API Key</label>
+      <input
+        type="password"
+        id="gemini-api-key"
+        placeholder="AIza..."
+        autocomplete="off"
+      />
+      <span class="hint">
+        Used only for extracting opportunity details from page content. Your key is stored locally.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="use-ai-extraction">Use AI extraction fallback</label>
+      <input
+        type="checkbox"
+        id="use-ai-extraction"
+      />
+      <span class="hint">
+        If enabled, ScholarScout uses Gemini to enrich missing fields after the normal DOM scrape.
+      </span>
+    </div>
 
     <hr class="divider" />
 
@@ -398,7 +430,7 @@
     </div>
 
     <!-- Save button -->
-    <button class="btn-save" onclick="saveConfig()">save settings</button>
+    <button class="btn-save" id="btn-save-settings" type="button">save settings</button>
     <div class="error-msg" id="error-msg"></div>
     <div class="toast" id="toast">✓ Settings saved successfully!</div>
 
