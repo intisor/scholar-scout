@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScholarScout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css" />
+
+</head>
+<body>
+  <div id="app">
+    <!-- Header with mode toggle -->
+    <header class="header">
+      <div class="header-left">
+        <img class="logo-icon" src="../icons/scholars.png" alt="ScholarScout" />
+        <span class="app-name">ScholarScout</span>
+        <div id="ai-status-pulse" class="ai-status hidden">
+          <span class="ai-icon">✨</span>
+          <span class="ai-text">AI Scanning...</span>
+        </div>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-quick" type="button">quick save</button>
+        <button class="mode-btn" id="btn-full" type="button">full edit</button>
+      </div>
+    </header>
+
+    <!-- Scraped info bar -->
+    <div class="scraped-bar" id="scraped-bar">
+      <div class="scraped-row">
+        <div class="scraped-label">scraped from tab</div>
+        <div id="ai-confidence" class="ai-conf-badge hidden">AI: 98% Confident</div>
+      </div>
+      <div class="scraped-title" id="scraped-title">loading tab info...</div>
+      <div class="scraped-url" id="scraped-url"></div>
+    </div>
+
+
+    <!-- Duplicate warning -->
+    <div class="dup-warn hidden" id="dup-warn">
+      ⚠️ You may have already clipped this — check Notion before saving
+    </div>
+
+    <!-- Health/status panel -->
+    <div class="health-panel" id="health-panel">
+      <div class="health-left">
+        <span class="health-dot" id="health-dot"></span>
+        <span class="health-text" id="health-text">checking status...</span>
+      </div>
+      <div class="health-actions">
+        <button type="button" class="health-btn" id="btn-open-panel">panel</button>
+        <button type="button" class="health-btn" id="btn-refresh-dom">refresh DOM</button>
+        <button type="button" class="health-btn" id="btn-sync-now">sync</button>
+        <button type="button" class="health-btn" id="btn-retry-pending">retry queue</button>
+      </div>
+    </div>
+
+    <!-- Main form -->
+    <form class="form-body" id="main-form">
+      <!-- Opportunity name -->
+      <div class="field">
+        <label for="opp-name">opportunity name</label>
+        <input type="text" id="opp-name" placeholder="edit if needed" required />
+      </div>
+
+      <!-- Deadlines -->
+      <div class="field-row">
+        <div class="field">
+          <label for="final-deadline">final deadline</label>
+          <input type="date" id="final-deadline" />
+        </div>
+        <div class="field">
+          <label for="next-action">next action date</label>
+          <input type="date" id="next-action" />
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="field">
+        <label for="status">status</label>
+        <select id="status">
+          <option value="To Review" selected>to review</option>
+          <option value="Drafting">drafting</option>
+          <option value="Needs Review">needs review</option>
+          <option value="Applied">applied</option>
+          <option value="Interview">interview</option>
+          <option value="Rejected">rejected</option>
+          <option value="Secured">secured</option>
+        </select>
+      </div>
+
+      <!-- Full mode only fields -->
+      <div class="full-only hidden">
+        <div class="field">
+          <label for="org">organization</label>
+          <input type="text" id="org" placeholder="e.g. Google, McKinsey, Yale" />
+        </div>
+
+        <div class="field">
+          <label for="opp-type">opportunity type</label>
+          <select id="opp-type">
+            <option value="">— select type —</option>
+            <option value="Scholarship">Scholarship</option>
+            <option value="Fellowship">Fellowship</option>
+            <option value="Grant">Grant</option>
+            <option value="Internship">Internship</option>
+            <option value="Hackathon">Hackathon</option>
+            <option value="Award">Award</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="value-amount">value / award amount</label>
+          <input type="text" id="value-amount" placeholder="e.g. $5,000 or Full Ride" />
+        </div>
+
+        <div class="field">
+          <label for="working-doc">working doc link</label>
+          <input type="url" id="working-doc" placeholder="https://docs.google.com/..." />
+        </div>
+
+        <div class="field">
+          <label for="blocker">current blocker</label>
+          <input type="text" id="blocker" placeholder="e.g. waiting on LOR from Dr. X" />
+        </div>
+
+        <div class="field">
+          <label for="review-stage">review stage</label>
+          <select id="review-stage">
+            <option value="">— select stage —</option>
+            <option value="Brainstorming">Brainstorming</option>
+            <option value="Rough Draft">Rough Draft</option>
+            <option value="Needs Roasting">Needs Roasting</option>
+            <option value="Final Polish">Final Polish</option>
+            <option value="Ready to Send">Ready to Send</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="effort-level">estimated effort</label>
+          <select id="effort-level">
+            <option value="">— select level —</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="portal-url">portal login URL</label>
+          <input type="url" id="portal-url" placeholder="https://portal.example.com/login" />
+        </div>
+
+        <div class="field">
+          <label for="app-id">application ID</label>
+          <input type="text" id="app-id" placeholder="ref #12345" />
+        </div>
+      </div>
+
+      <!-- Asset quick-links -->
+      <div class="asset-links">
+        <div class="asset-label">quick access</div>
+        <div class="asset-buttons">
+          <button type="button" class="asset-btn" id="btn-copy-resume" title="Copy resume URL to clipboard">
+            📄 Resume
+          </button>
+          <button type="button" class="asset-btn" id="btn-copy-essay" title="Copy essay URL to clipboard">
+            ✍️ Essay
+          </button>
+        </div>
+      </div>
+
+      <!-- Junior toggle -->
+      <div class="junior-row" id="junior-row">
+        <div class="junior-label">
+          <span class="junior-title">share with juniors</span>
+          <span class="junior-sub">adds to shared portal</span>
+        </div>
+        <div class="toggle" id="junior-toggle">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </form>
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <button class="btn-discard" id="btn-discard" type="button">discard</button>
+      <button class="btn-save" id="btn-save" type="button">save to notion</button>
+    </div>
+
+    <!-- Error message -->
+    <div class="error-msg hidden" id="error-msg"></div>
+
+    <!-- Triage deadline strip -->
+    <div class="triage-strip">
+      <div class="triage-header">next 7 days</div>
+      <input type="text" id="triage-filter" class="triage-filter" placeholder="filter deadlines..." />
+      <div class="triage-items" id="triage-items">
+        <div class="triage-empty">syncing...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
