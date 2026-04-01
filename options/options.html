@@ -352,13 +352,91 @@
     </div>
 
     <div class="field">
+      <label for="groq-api-key">Groq API Key</label>
+      <input
+        type="password"
+        id="groq-api-key"
+        placeholder="gsk_..."
+        autocomplete="off"
+      />
+      <span class="hint">
+        Optional fallback provider for high-speed inference.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="mistral-api-key">Mistral API Key</label>
+      <input
+        type="password"
+        id="mistral-api-key"
+        placeholder="mistral_..."
+        autocomplete="off"
+      />
+      <span class="hint">
+        Optional high-volume fallback provider.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="cerebras-api-key">Cerebras API Key</label>
+      <input
+        type="password"
+        id="cerebras-api-key"
+        placeholder="csk_..."
+        autocomplete="off"
+      />
+      <span class="hint">
+        Optional fast fallback provider.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="openrouter-api-key">OpenRouter API Key</label>
+      <input
+        type="password"
+        id="openrouter-api-key"
+        placeholder="sk-or-..."
+        autocomplete="off"
+      />
+      <span class="hint">
+        Optional model-router fallback. Use free models ending with <span class="code">:free</span>.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="ai-provider-order">AI Provider Order</label>
+      <input
+        type="text"
+        id="ai-provider-order"
+        placeholder="gemini,groq,mistral,openrouter,cerebras,unclose,pollinations"
+        autocomplete="off"
+      />
+      <span class="hint">
+        Comma-separated provider priority. ScholarScout automatically shifts providers when one reaches rate limits.
+      </span>
+    </div>
+
+    <div class="field">
+      <label for="ai-target-language">DOM Translation Target Language</label>
+      <input
+        type="text"
+        id="ai-target-language"
+        placeholder="English"
+        autocomplete="off"
+      />
+      <span class="hint">
+        Scraped title and organization can be auto-translated into this language.
+      </span>
+    </div>
+
+    <div class="field">
       <label for="use-ai-extraction">Use AI extraction fallback</label>
       <input
         type="checkbox"
         id="use-ai-extraction"
       />
       <span class="hint">
-        If enabled, ScholarScout uses Gemini to enrich missing fields after the normal DOM scrape.
+        If enabled, ScholarScout uses a rate-limit-aware provider chain to enrich and translate scraped DOM fields.
       </span>
     </div>
 

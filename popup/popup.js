@@ -140,12 +140,8 @@ async function tryAiEnrichment(tabId, fallbackContext) {
   const conf = document.getElementById('ai-confidence');
   
   try {
-    const { useAiExtraction, geminiApiKey } = await chrome.storage.local.get([
-      'useAiExtraction',
-      'geminiApiKey',
-    ]);
-
-    if (!useAiExtraction || !geminiApiKey) return;
+    const { useAiExtraction } = await chrome.storage.local.get(['useAiExtraction']);
+    if (!useAiExtraction) return;
 
     // Show AI is working
     if (pulse) pulse.classList.remove('hidden');
@@ -163,7 +159,8 @@ async function tryAiEnrichment(tabId, fallbackContext) {
       
       // AI Confidence Badge
       if (conf && ext.confidence) {
-        conf.textContent = `AI: ${Math.round(ext.confidence * 100)}% Confident`;
+        const providerText = response?.provider ? ` via ${response.provider}` : '';
+        conf.textContent = `AI: ${Math.round(ext.confidence * 100)}% Confident${providerText}`;
         conf.classList.remove('hidden');
       }
 
@@ -188,10 +185,52 @@ async function tryAiEnrichment(tabId, fallbackContext) {
       }
     }
 
+    await tryAiDomTranslation();
+
   } catch (err) {
     console.warn('[Popup] AI insight error:', err);
   } finally {
     if (pulse) pulse.classList.add('hidden');
+  }
+}
+
+async function tryAiDomTranslation() {
+  const nameInput = document.getElementById('opp-name');
+  const orgInput = document.getElementById('org');
+  const conf = document.getElementById('ai-confidence');
+  const payload = {
+    title: nameInput?.value || '',
+    organization: orgInput?.value || '',
+    summary: document.getElementById('scraped-title')?.textContent || '',
+  };
+
+  if (!payload.title && !payload.organization && !payload.summary) return;
+
+  const result = await chrome.runtime.sendMessage({
+    type: 'AI_TRANSLATE_SCRAPED',
+    payload,
+  });
+
+  if (!result?.ok || !result?.translated) return;
+
+  const translated = result.translated;
+  const currentName = nameInput?.value || '';
+  const currentOrg = orgInput?.value || '';
+
+  if (nameInput && translated.title && translated.title !== currentName) {
+    nameInput.value = translated.title;
+    document.getElementById('scraped-title').textContent = translated.title;
+    flashField('opp-name');
+  }
+
+  if (orgInput && translated.organization && translated.organization !== currentOrg) {
+    orgInput.value = translated.organization;
+    flashField('org');
+  }
+
+  if (conf && translated.confidence) {
+    conf.textContent = `AI Translate: ${Math.round(translated.confidence * 100)}% (${result.targetLanguage}) via ${result.provider}`;
+    conf.classList.remove('hidden');
   }
 }
 

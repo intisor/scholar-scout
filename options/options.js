@@ -40,6 +40,12 @@ async function loadConfig() {
     notionClientSecret,
     notionOAuthConnected,
     geminiApiKey,
+    groqApiKey,
+    mistralApiKey,
+    cerebrasApiKey,
+    openrouterApiKey,
+    aiProviderOrder,
+    aiTargetLanguage,
     useAiExtraction,
   } = await chrome.storage.local.get([
     'notionToken',
@@ -50,6 +56,12 @@ async function loadConfig() {
     'notionClientSecret',
     'notionOAuthConnected',
     'geminiApiKey',
+    'groqApiKey',
+    'mistralApiKey',
+    'cerebrasApiKey',
+    'openrouterApiKey',
+    'aiProviderOrder',
+    'aiTargetLanguage',
     'useAiExtraction',
   ]);
 
@@ -59,6 +71,12 @@ async function loadConfig() {
     hasClientId: !!notionClientId,
     hasClientSecret: !!notionClientSecret,
     hasGeminiKey: !!geminiApiKey,
+    hasGroqKey: !!groqApiKey,
+    hasMistralKey: !!mistralApiKey,
+    hasCerebrasKey: !!cerebrasApiKey,
+    hasOpenRouterKey: !!openrouterApiKey,
+    aiProviderOrder,
+    aiTargetLanguage,
     useAiExtraction,
     oauthConnected: notionOAuthConnected,
   });
@@ -84,6 +102,20 @@ async function loadConfig() {
   if (geminiApiKey) {
     document.getElementById('gemini-api-key').value = geminiApiKey;
   }
+  if (groqApiKey) {
+    document.getElementById('groq-api-key').value = groqApiKey;
+  }
+  if (mistralApiKey) {
+    document.getElementById('mistral-api-key').value = mistralApiKey;
+  }
+  if (cerebrasApiKey) {
+    document.getElementById('cerebras-api-key').value = cerebrasApiKey;
+  }
+  if (openrouterApiKey) {
+    document.getElementById('openrouter-api-key').value = openrouterApiKey;
+  }
+  document.getElementById('ai-provider-order').value = aiProviderOrder || 'gemini,groq,mistral,openrouter,cerebras,unclose,pollinations';
+  document.getElementById('ai-target-language').value = aiTargetLanguage || 'English';
   document.getElementById('use-ai-extraction').checked = Boolean(useAiExtraction);
 
   updateOAuthStatus(Boolean(notionOAuthConnected));
@@ -99,6 +131,12 @@ async function saveConfig() {
   const notionClientId = document.getElementById('notion-client-id').value?.trim();
   const notionClientSecret = document.getElementById('notion-client-secret').value?.trim();
   const geminiApiKey = document.getElementById('gemini-api-key').value?.trim();
+  const groqApiKey = document.getElementById('groq-api-key').value?.trim();
+  const mistralApiKey = document.getElementById('mistral-api-key').value?.trim();
+  const cerebrasApiKey = document.getElementById('cerebras-api-key').value?.trim();
+  const openrouterApiKey = document.getElementById('openrouter-api-key').value?.trim();
+  const aiProviderOrder = document.getElementById('ai-provider-order').value?.trim();
+  const aiTargetLanguage = document.getElementById('ai-target-language').value?.trim();
   const useAiExtraction = document.getElementById('use-ai-extraction').checked;
   const resumeUrl = document.getElementById('resume-url').value?.trim();
   const essayUrl = document.getElementById('essay-url').value?.trim();
@@ -147,6 +185,12 @@ async function saveConfig() {
       notionClientId: notionClientId || '',
       notionClientSecret: notionClientSecret || '',
       geminiApiKey: geminiApiKey || '',
+      groqApiKey: groqApiKey || '',
+      mistralApiKey: mistralApiKey || '',
+      cerebrasApiKey: cerebrasApiKey || '',
+      openrouterApiKey: openrouterApiKey || '',
+      aiProviderOrder: aiProviderOrder || 'gemini,groq,mistral,openrouter,cerebras,unclose,pollinations',
+      aiTargetLanguage: aiTargetLanguage || 'English',
       useAiExtraction,
       resumeUrl: resumeUrl || '',
       essayUrl: essayUrl || '',

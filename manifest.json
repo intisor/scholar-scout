@@ -15,7 +15,14 @@
   "host_permissions": [
     "https://api.notion.com/*",
     "https://www.notion.com/*",
-    "https://generativelanguage.googleapis.com/*"
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.groq.com/*",
+    "https://api.cerebras.ai/*",
+    "https://api.mistral.ai/*",
+    "https://openrouter.ai/*",
+    "https://hermes.ai.unturf.com/*",
+    "https://qwen.ai.unturf.com/*",
+    "https://text.pollinations.ai/*"
   ],
   "action": {
     "default_popup": "popup/popup.html",
