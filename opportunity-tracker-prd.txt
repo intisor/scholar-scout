@@ -1,0 +1,739 @@
+OPPORTUNITY TRACKER CHROME EXTENSION	PRODUCT REQUIREMENTS DOCUMENT
+
+
+
+PRODUCT REQUIREMENTS DOCUMENT
+
+Opportunity Tracker
+
+Chrome Extension + Notion Integration
+
+A zero-friction scholarship & opportunity pipeline for ambitious builders
+
+
+
+
+
+Version
+
+1.0
+
+Status
+
+Draft — Pending Review
+
+Author
+
+Intitech (Abdulawwal Intisor)
+
+Date
+
+March 29, 2026
+
+Target Launch
+
+2026 Holiday Break
+
+Extension Standard
+
+Manifest V3
+
+
+
+1. Overview
+
+
+
+1.1 Problem Statement
+
+Managing scholarship and opportunity pipelines is effectively a part-time job. The current state involves scattered browser bookmarks, missed deadlines, and duplicated effort when sharing opportunities with junior peers. There is no single system that handles discovery, triage, application tracking, and junior distribution in one place.
+
+
+
+1.2 Solution
+
+A Manifest V3 Chrome Extension paired with Notion as a backend database. The extension handles rapid, zero-friction data capture directly on scholarship pages. Notion serves as both the data store and the UI for deeper organizational workflows, including a curated junior distribution portal.
+
+
+
+1.3 Goals
+
+Reduce time-to-capture of a new opportunity to under 10 seconds
+
+Eliminate missed deadlines by surfacing 7-day countdowns in the extension popup
+
+Enable one-click forwarding of vetted opportunities to a juniors-facing Notion portal
+
+Track full application lifecycle from discovery to confirmation received
+
+Provide a CRM-style layer for networking contacts attached to each opportunity
+
+
+
+1.4 Non-Goals
+
+Automatically writing or submitting applications
+
+Scraping opportunity listings from external job boards
+
+Building a standalone web dashboard (Notion is the UI)
+
+Mobile support in V1
+
+
+
+2. User Personas
+
+
+
+2.1 Primary User: The Builder
+
+A final-year software engineering student actively hunting scholarships, fellowships, grants, and hackathons. Technically proficient, works in sprint-like bursts, values speed and resource efficiency. Wants a system that does the busywork while they stay in flow.
+
+
+
+Browses 10–20+ opportunity pages per week
+
+Manages multiple active applications simultaneously
+
+Occasionally applies at the last minute and needs deadline panic-alerts
+
+Mentors juniors and wants to forward relevant opportunities without extra friction
+
+
+
+2.2 Secondary User: The Junior
+
+A first- or second-year student with limited time and discovery reach. They don’t hunt; they rely on the primary user to surface pre-vetted opportunities. They consume from the shared Notion portal and need clean, filtered results with no noise from the primary user’s private workflow.
+
+
+
+3. Feature Requirements
+
+
+
+ID
+
+Feature
+
+Description
+
+Pri.
+
+F-01
+
+One-Click DOM Scraper
+
+Content script auto-extracts page title, URL, and deadline (via regex on common date formats) from the active tab on popup open.
+
+P0
+
+F-02
+
+Junior Forward Toggle
+
+A “Bless the Juniors” checkbox that flags an opportunity for the shared Notion portal. One click, no form.
+
+P0
+
+F-03
+
+Status Dropdown
+
+Inline status selector: To Review, Drafting, Needs Review, Applied, Interview, Rejected, Secured.
+
+P0
+
+F-04
+
+Deadline Triage Dashboard
+
+Popup view showing color-coded countdown for all items with Next Action Date ≤ 7 days. Red = ≤2 days, amber = ≤7 days.
+
+P0
+
+F-05
+
+Next Action Date
+
+A micro-deadline field separate from the final deadline. The dashboard surfaces this, not the final date.
+
+P0
+
+F-06
+
+Current Blocker Tag
+
+Freetext field: what is preventing progress? e.g. “Waiting on LOR from Dr. X”. Surfaces on the Kanban board.
+
+P1
+
+F-07
+
+Working Doc Link
+
+Direct URL field to the Google Doc / Notion page / Overleaf where the essay is being written. One-click access.
+
+P1
+
+F-08
+
+Asset Quick-Links
+
+Popup buttons to copy Master Resume URL and Common App Essay URL to clipboard instantly.
+
+P1
+
+F-09
+
+Review Stage Tracker
+
+Dropdown: Brainstorming → Rough Draft → Needs Roasting → Final Polish → Ready to Send.
+
+P1
+
+F-10
+
+Networking CRM
+
+Fields for Point of Contact (name + email), Outreach Status dropdown, Follow-up Trigger date.
+
+P1
+
+F-11
+
+Effort & Value Metrics
+
+Estimated Effort (Low/Medium/High) and Value Amount fields to compute ROI before starting an application.
+
+P1
+
+F-12
+
+Required Assets Multi-Select
+
+Tags: Resume, Transcript, Cover Letter, Portfolio, LOR, Video Pitch, GitHub. Acts as a checklist.
+
+P1
+
+F-13
+
+Eligibility & Geo Tags
+
+Multi-select for Eligibility Level (Year 1–4, Postgrad) and Geographic Requirement (Global, Africa, US/UK Only).
+
+P1
+
+F-14
+
+Confirmation Received
+
+Boolean checkbox. Only checked when the automated “Thank you for applying” email is in inbox.
+
+P1
+
+F-15
+
+Portal Login URL
+
+Separate URL for the authenticated application portal dashboard, distinct from the landing page URL.
+
+P2
+
+F-16
+
+Application ID
+
+Freetext field for the portal-assigned application reference number.
+
+P2
+
+
+
+4. Data Schema
+
+
+
+The extension constructs and POSTs a single JSON payload to the Notion API. The schema is flat and grouped by concern to map cleanly to Notion database properties.
+
+
+
+4.1 Opportunity Info
+
+Field
+
+Type
+
+Description / Values
+
+name
+
+String
+
+Opportunity title (auto-scraped from page title, editable)
+
+org
+
+String
+
+Sponsoring organization
+
+url
+
+URL
+
+Landing page URL (auto-captured)
+
+portal_login
+
+URL
+
+Authenticated portal dashboard URL
+
+value_amount
+
+String
+
+e.g. $5,000, Full Ride, £800 Stipend
+
+type
+
+Select
+
+Fellowship | Scholarship | Grant | Internship | Hackathon
+
+
+
+4.2 Triage Metrics
+
+Field
+
+Type
+
+Description / Values
+
+status
+
+Select
+
+To Review | Drafting | Needs Review | Applied | Interview | Rejected | Secured
+
+priority
+
+Select
+
+P0 — Critical | P1 — High | P2 — Low
+
+effort_level
+
+Select
+
+Low | Medium | High
+
+final_deadline
+
+Date
+
+ISO-8601. The hard submission deadline.
+
+date_clipped
+
+Date
+
+ISO-8601. Auto-set to now() on capture.
+
+
+
+4.3 Execution Engine
+
+Field
+
+Type
+
+Description / Values
+
+next_action_date
+
+Date
+
+ISO-8601. Micro-deadline for the very next step. This powers the triage dashboard.
+
+current_blocker
+
+String
+
+Freetext. e.g. “Waiting on LOR from Dr. Slowpoke”
+
+working_doc_link
+
+URL
+
+Direct link to the active essay/application document
+
+review_stage
+
+Select
+
+Brainstorming | Rough Draft | Needs Roasting | Final Polish | Ready to Send
+
+required_assets
+
+Multi-Select
+
+Resume | Transcript | Cover Letter | Portfolio | LOR | Video Pitch | GitHub
+
+application_id
+
+String
+
+Portal-issued application reference number
+
+confirmation_received
+
+Boolean
+
+True only when confirmation email is in inbox
+
+
+
+4.4 Networking CRM
+
+Field
+
+Type
+
+Description / Values
+
+poc_name
+
+String
+
+Name of recruiter, program manager, or known past winner
+
+poc_email
+
+String
+
+Contact email address
+
+outreach_status
+
+Select
+
+Not Contacted | LinkedIn Sent | Cold Email Sent | Actively Chatting
+
+follow_up_trigger
+
+Date
+
+ISO-8601. Date to send the follow-up email.
+
+
+
+4.5 Junior Distribution
+
+Field
+
+Type
+
+Description / Values
+
+share_with_juniors
+
+Boolean
+
+True = appears on the junior-facing Notion portal
+
+eligibility_level
+
+Multi-Select
+
+Year 1 | Year 2 | Year 3 | Final Year | Postgrad
+
+geographic_requirements
+
+Multi-Select
+
+Global | Remote | Africa-Specific | US/UK Only | Nigeria Only
+
+
+
+5. Notion Architecture
+
+
+
+5.1 Database Schema
+
+The Notion database maps 1:1 to the JSON schema above. Each group (Opportunity Info, Triage, Execution, CRM, Junior) maps to a Notion property group. Property types are selected to match the field types in the schema.
+
+
+
+5.2 Workflow: Personal Command Center
+
+View: Kanban board grouped by Status property
+
+Use: Cards move left-to-right as the application progresses
+
+Filter: A saved “Immediate Action” view shows only cards where Next Action Date ≤ Today
+
+Filter: A saved “Blocked” view shows cards where Current Blocker is not empty
+
+Template: A database template auto-populates a Required Assets checklist for each new card
+
+
+
+5.3 Workflow: Junior Distribution Portal
+
+Type: A Linked Database View on a separate shared/public Notion page
+
+Permanent filter: [Share with Juniors] is Checked AND [Final Deadline] is after Today
+
+Visible columns: Name, Organization, Value, Type, Final Deadline, Eligibility Level, Geographic Requirements
+
+Hidden columns: All personal tracking fields (Status, Blocker, Working Doc, CRM fields)
+
+Juniors see curated gold. They never see your personal workflow or private notes.
+
+
+
+6. Technical Architecture
+
+
+
+6.1 Extension Stack
+
+Extension Standard
+
+Manifest V3 (required for modern Chrome)
+
+Popup UI
+
+TypeScript + React + Tailwind CSS
+
+State Management
+
+chrome.storage.local (cache active Next Action Dates)
+
+Content Script
+
+Vanilla TS injected into active tab for DOM scraping
+
+Background Worker
+
+Service Worker — handles auth, API calls, and CORS avoidance
+
+API Client
+
+Fetch API calling Notion REST v1
+
+Auth
+
+Notion Integration Token stored in extension environment, never DOM-exposed
+
+
+
+6.2 Content Script Behavior
+
+The content script is injected into the active tab when the popup is opened. It extracts:
+
+document.title → opportunity name (editable before save)
+
+window.location.href → URL
+
+Regex scan of visible text for common date formats: MM/DD/YYYY, DD Month YYYY, Month DD YYYY, “Deadline: X”, “Close: X”
+
+Scraped data is sent via chrome.runtime.sendMessage to the popup. The popup pre-fills fields; the user edits if needed and saves.
+
+
+
+6.3 Background Service Worker
+
+The service worker is responsible for all outbound API calls. This prevents CORS errors that occur when hitting the Notion API from a page’s execution context. It:
+
+Receives the structured payload from the popup
+
+Attaches the Notion Integration Token from chrome.storage.local
+
+POSTs to https://api.notion.com/v1/pages with the target database ID
+
+Returns success/failure status to the popup for UI feedback
+
+
+
+6.4 Notion API Integration
+
+Endpoint
+
+POST https://api.notion.com/v1/pages
+
+Auth Header
+
+Authorization: Bearer <NOTION_INTEGRATION_TOKEN>
+
+Notion-Version
+
+2022-06-28
+
+Setup
+
+Create Internal Integration in Notion → share target DB with integration → copy Integration Token
+
+Error Handling
+
+Popup displays inline error banner on 4xx/5xx. Retries not automatic in V1.
+
+
+
+6.5 Security Constraints
+
+Notion Integration Token is stored in chrome.storage.local, never hardcoded in source
+
+Token is never injected into or accessible from the DOM of scraped pages
+
+No external analytics or telemetry in V1
+
+All scraped data is user-visible before submission. No silent background scraping.
+
+
+
+7. UX & Interaction Requirements
+
+
+
+7.1 Popup Layout
+
+The popup is a single scrollable panel, approximately 380px wide. It is divided into collapsible sections:
+
+Header: Page title (auto-scraped), editable, with Save and Discard actions
+
+Triage: Status, Priority, Final Deadline, Next Action Date, Effort Level
+
+Execution: Current Blocker, Working Doc Link, Review Stage, Required Assets
+
+CRM: POC Name, POC Email, Outreach Status, Follow-up Date
+
+Distribution: Junior Toggle, Eligibility Tags, Geo Tags
+
+Footer: Triage Dashboard — 7-day countdown cards for upcoming Next Action Dates
+
+
+
+7.2 Performance Requirements
+
+Popup must render in < 200ms (no network call on open; use cached chrome.storage.local data)
+
+Notion API POST must complete in < 3 seconds. Show loading spinner. Show error on timeout.
+
+DOM scraping must complete in < 500ms. Degrade gracefully if no date found.
+
+
+
+7.3 Accessibility
+
+All interactive elements are keyboard-navigable
+
+Color is not the sole indicator of status (labels accompany color coding)
+
+Minimum touch target size: 32px for all buttons
+
+
+
+8. Out of Scope (V1)
+
+
+
+Automatic opportunity discovery or listing scraping from external boards
+
+Multi-browser support (Firefox, Safari) — Chrome only in V1
+
+Mobile companion app
+
+Automated follow-up email sending
+
+Essay writing assistance or AI prompting within the extension
+
+Team collaboration beyond the junior portal (no multi-user editing of the same pipeline)
+
+Offline mode (requires network for Notion API sync)
+
+
+
+9. Success Metrics
+
+
+
+Time-to-Capture
+
+< 10 seconds from landing on a scholarship page to saved Notion card
+
+Deadline Miss Rate
+
+0 missed deadlines after system adoption
+
+Junior Reach
+
+≥ 5 opportunities forwarded to juniors per month
+
+Application Pipeline
+
+≥ 3 active applications in “Drafting” or later stage at any time
+
+Confirmation Rate
+
+Confirmation Received = True for all Applied items within 48 hours
+
+
+
+10. Development Milestones
+
+
+
+M1 — Scaffold
+
+Manifest V3 project setup, popup shell, content script messaging pipeline
+
+M2 — Capture
+
+DOM scraper working, popup pre-fill, manual field editing
+
+M3 — Notion Sync
+
+Service worker posting to Notion API, error handling, loading states
+
+M4 — Triage Dashboard
+
+7-day countdown view, chrome.storage.local caching of action dates
+
+M5 — Junior Portal
+
+Linked DB view set up in Notion with correct filter, visible columns configured
+
+M6 — Polish
+
+Tailwind styling, keyboard nav, error states, edge case handling
+
+Target
+
+Shipped during 2026 holiday break
+
+
+
+11. Open Questions
+
+
+
+Should the extension support a “Document Vault” (quick-copy links to master resume, transcripts, etc.) in V1 or defer to V2?
+
+Should deadlines auto-sync from Notion back to Google Calendar? If yes, Calendar API scope is required.
+
+Should the juniors’ portal page require a Notion account, or should it be fully public (read-only via Share to Web)?
+
+Should the triage dashboard be a separate extension page (full tab) or stay in the popup panel?
+
+
+
+
+
+End of Document — v1.0 — March 29, 2026
+
+	CONFIDENTIAL — INTERNAL USE	Page

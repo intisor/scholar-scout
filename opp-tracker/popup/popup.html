@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Opp Tracker</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="app">
+
+    <header class="header">
+      <div class="header-left">
+        <span class="logo-dot"></span>
+        <span class="app-name">opp tracker</span>
+      </div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-quick" onclick="setMode('quick')">quick save</button>
+        <button class="mode-btn" id="btn-full" onclick="setMode('full')">full edit</button>
+      </div>
+    </header>
+
+    <div class="scraped-bar" id="scraped-bar">
+      <div class="scraped-label">scraped from current tab</div>
+      <div class="scraped-title" id="scraped-title">loading...</div>
+      <div class="scraped-url" id="scraped-url"></div>
+    </div>
+
+    <div class="dup-warn hidden" id="dup-warn">
+      ⚠ you may have already clipped this — check Notion before saving
+    </div>
+
+    <form class="form-body" id="main-form" onsubmit="return false">
+      <div class="field">
+        <label for="opp-name">opportunity name</label>
+        <input type="text" id="opp-name" placeholder="edit if needed" required />
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="deadline">final deadline</label>
+          <input type="date" id="deadline" />
+        </div>
+        <div class="field">
+          <label for="next-action">next action date</label>
+          <input type="date" id="next-action" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="status">status</label>
+        <select id="status">
+          <option value="To Review" selected>to review</option>
+          <option value="Drafting">drafting</option>
+          <option value="Applied">applied</option>
+          <option value="Rejected">rejected</option>
+          <option value="Secured">secured</option>
+        </select>
+      </div>
+
+      <!-- Full mode extras -->
+      <div class="full-only hidden">
+        <div class="field">
+          <label for="working-doc">working doc link</label>
+          <input type="url" id="working-doc" placeholder="https://docs.google.com/..." />
+        </div>
+        <div class="field">
+          <label for="blocker">current blocker</label>
+          <input type="text" id="blocker" placeholder="e.g. waiting on LOR from Dr. X" />
+        </div>
+        <div class="field">
+          <label for="value-amount">value / award amount</label>
+          <input type="text" id="value-amount" placeholder="e.g. $5,000 or Full Ride" />
+        </div>
+      </div>
+
+      <div class="junior-row" id="junior-row" onclick="toggleJunior()">
+        <div class="junior-label">
+          <span class="junior-title">bless the juniors</span>
+          <span class="junior-sub">adds to shared portal</span>
+        </div>
+        <div class="toggle" id="junior-toggle">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
+    </form>
+
+    <div class="actions">
+      <button class="btn-discard" onclick="handleDiscard()">discard</button>
+      <button class="btn-save" id="btn-save" onclick="handleSave()">save to notion</button>
+    </div>
+
+    <div class="error-msg hidden" id="error-msg"></div>
+
+    <div class="triage-strip">
+      <div class="triage-header">next 7 days</div>
+      <div class="triage-items" id="triage-items">
+        <div class="triage-empty">syncing...</div>
+      </div>
+    </div>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

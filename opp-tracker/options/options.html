@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Opp Tracker — Settings</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 14px; color: #111; background: #fafafa; padding: 40px; }
+    .container { max-width: 520px; }
+    .logo { display: flex; align-items: center; gap: 8px; margin-bottom: 32px; }
+    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: #1D9E75; }
+    .logo-name { font-size: 16px; font-weight: 600; }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 32px; line-height: 1.5; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+    label { font-size: 12px; font-weight: 500; color: #444; letter-spacing: 0.03em; text-transform: uppercase; }
+    input {
+      font-size: 14px; padding: 10px 12px;
+      border: 0.5px solid #ccc; border-radius: 8px;
+      background: #fff; color: #111; font-family: monospace;
+      width: 100%;
+    }
+    input:focus { outline: none; border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,0.12); }
+    .hint { font-size: 12px; color: #aaa; line-height: 1.5; }
+    .hint a { color: #1D9E75; text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+    .btn-save {
+      padding: 10px 24px;
+      background: #0F6E56; color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; font-family: inherit;
+      margin-top: 8px;
+    }
+    .btn-save:hover { background: #085041; }
+    .toast {
+      display: none; margin-top: 16px;
+      padding: 10px 14px;
+      background: #E1F5EE;
+      border: 0.5px solid #1D9E75;
+      border-radius: 8px;
+      font-size: 13px; color: #085041;
+    }
+    .divider { border: none; border-top: 0.5px solid #e5e5e5; margin: 32px 0; }
+    .section-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: #444; }
+    .notion-steps { display: flex; flex-direction: column; gap: 10px; }
+    .step { display: flex; gap: 12px; align-items: flex-start; }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #0F6E56; color: #fff;
+      font-size: 11px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-text { font-size: 13px; color: #555; line-height: 1.6; }
+    .step-text a { color: #1D9E75; text-decoration: none; }
+    .step-text a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <span class="logo-dot"></span>
+      <span class="logo-name">opp tracker</span>
+    </div>
+
+    <h1>settings</h1>
+    <p class="subtitle">Connect your Notion workspace. This is a one-time setup — your token is stored locally and never leaves your browser.</p>
+
+    <div class="field">
+      <label>Notion Integration Token</label>
+      <input type="password" id="notion-token" placeholder="secret_xxxxxxxxxxxxxxxx" autocomplete="off" />
+      <span class="hint">Get this from <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> → New integration → Internal → Copy token</span>
+    </div>
+
+    <div class="field">
+      <label>Database ID</label>
+      <input type="text" id="notion-db-id" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+      <span class="hint">Open your Notion database → Share → Copy link. The ID is the 32-character string before the ?. Make sure you have shared the database with your integration.</span>
+    </div>
+
+    <button class="btn-save" onclick="saveConfig()">save settings</button>
+    <div class="toast" id="toast">Settings saved. You're good to go.</div>
+
+    <hr class="divider" />
+
+    <p class="section-title">how to set up Notion</p>
+    <div class="notion-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Go to <a href="https://notion.so/my-integrations" target="_blank">notion.so/my-integrations</a> and create a new Internal integration. Name it "Opp Tracker". Copy the token above.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Create a Notion database with these properties: <strong>Name</strong> (title), <strong>URL</strong> (url), <strong>Status</strong> (select), <strong>Final Deadline</strong> (date), <strong>Next Action Date</strong> (date), <strong>Organization</strong> (text), <strong>Share with Juniors</strong> (checkbox), <strong>Date Clipped</strong> (date).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Open that database, click "..." → Connections → Add your integration. Then copy the database URL — your DB ID is the 32-char string in it.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Paste the token and DB ID above, hit save, and you're done. Go clip something.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { notionToken, notionDbId } = await chrome.storage.local.get(['notionToken', 'notionDbId']);
+      if (notionToken) document.getElementById('notion-token').value = notionToken;
+      if (notionDbId) document.getElementById('notion-db-id').value = notionDbId;
+    });
+
+    function saveConfig() {
+      const token = document.getElementById('notion-token').value.trim();
+      const dbId = document.getElementById('notion-db-id').value.trim();
+      if (!token || !dbId) { alert('Both fields are required.'); return; }
+      chrome.storage.local.set({ notionToken: token, notionDbId: dbId }, () => {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.display = 'none', 3000);
+        chrome.runtime.sendMessage({ type: 'SYNC_CACHE' });
+      });
+    }
+  </script>
+</body>
+</html>
